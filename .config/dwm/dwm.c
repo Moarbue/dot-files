@@ -793,7 +793,9 @@ drawbar(Monitor *m)
 					}
 					remainder--;
 				}
-				drw_text(drw, x, 0, tabw, bh, lrpad / 2, c->name, 0);
+				int mid = (tabw - (int)TEXTW(c->name)) / 2;
+				mid = mid >= lrpad / 2 ? mid : lrpad;
+				drw_text(drw, x, 0, tabw, bh, mid, c->name, 0);
 				x += tabw;
 			}
 		} else {
