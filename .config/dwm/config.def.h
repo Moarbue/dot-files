@@ -4,8 +4,12 @@
 
 /* appearance */
 static const unsigned int borderpx       = 2;        /* border pixel of windows */
-static const unsigned int gappx          = 10;        /* gaps between windows */
 static const unsigned int snap           = 32;       /* snap pixel */
+static const unsigned int gappih         = 15;       /* horiz inner gap between windows */
+static const unsigned int gappiv         = 15;       /* vert inner gap between windows */
+static const unsigned int gappoh         = 15;       /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov         = 15;       /* vert outer gap between windows and screen edge */
+static const int smartgaps               = 0;        /* 1 means no outer gap when there is only one window */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayonleft  = 0;   	/* 0: systray in the right corner, >0: systray on left of status text */
 static const unsigned int systrayspacing = 2;   /* systray spacing */
@@ -63,6 +67,8 @@ static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 static const int decorhints  = 1;    /* 1 means respect decoration hints */
+
+#include "vanitygaps.c"
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
@@ -181,14 +187,16 @@ static Signal signals[] = {
 	{ "killclient",		killclient },
 	{ "setlayout", 		setlayoutex },
 	{ "cyclelayouts",	layoutscroll },
-	{ "fullscreen",		fullscreen },
+	{ "fullscreen",		setfullscreen },
 	{ "togglefloating",	togglefloating },
 	{ "focusmon",		focusmon },
 	{ "tagmon",			tagmon },
 	{ "show",			show },
 	{ "showall",		showall },
 	{ "hide",			hide },
-	{ "setgaps",		setgaps },
+	{ "incgaps",		incrgaps },
+	{ "togglegaps",		togglegaps },
+	{ "defaultgaps",	defaultgaps },
 	{ "toggletag",		toggleviewex },
 	{ "movetotag",		tagex },
 	{ "copytoall",		tagall },
