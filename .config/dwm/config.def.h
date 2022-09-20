@@ -3,8 +3,8 @@
 #define SESSION_FILE "/tmp/dwm-session"
 
 /* appearance */
-static const unsigned int borderpx       = 1;        /* border pixel of windows */
-static const unsigned int gappx          = 5;        /* gaps between windows */
+static const unsigned int borderpx       = 2;        /* border pixel of windows */
+static const unsigned int gappx          = 10;        /* gaps between windows */
 static const unsigned int snap           = 32;       /* snap pixel */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayonleft  = 0;   	/* 0: systray in the right corner, >0: systray on left of status text */
@@ -19,9 +19,9 @@ static const int sidepad                 = 10;       /* horizontal padding of ba
 static const double activeopacity        = 1.0f;     /* Window opacity when it's focused (0 <= opacity <= 1) */
 static const double inactiveopacity      = 0.85f;   /* Window opacity when it's inactive (0 <= opacity <= 1) */
 static       Bool bUseOpacity            = True;     /* Starts with opacity on any unfocused windows */
-static const int user_bh                 = 25;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
-static const char *fonts[]               = { "monospace:size=10" };
-static const char dmenufont[]            = "monospace:size=10";
+static const int user_bh                 = 30;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
+static const char *fonts[]               = { "Iosevka Nerd Font:size=12" };
+static const char dmenufont[]            = "Iosevka Nerd Font:size=12";
 static const char col_gray1[]            = "#222222";
 static const char col_gray2[]            = "#444444";
 static const char col_gray3[]            = "#bbbbbb";
@@ -39,6 +39,7 @@ static const unsigned int alphas[][3]      = {
 	/*               fg      bg        border     */
 	[SchemeNorm] = { OPAQUE, baralpha, borderalpha },
 	[SchemeSel]  = { OPAQUE, baralpha, borderalpha },
+	[SchemeHid]  = { OPAQUE, baralpha, borderalpha },
 };
 
 /* tagging */
@@ -73,7 +74,7 @@ static const Layout layouts[] = {
 };
 
 /* key definitions */
-#define MODKEY Mod1Mask
+#define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -83,73 +84,18 @@ static const Layout layouts[] = {
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
-/* commands */
-static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "st", NULL };
-
 static const Key keys[] = {
-	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_b,      togglebar,      {0} },
-	{ MODKEY,                       XK_j,      focusstackvis,  {.i = +1 } },
-	{ MODKEY,                       XK_k,      focusstackvis,  {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_j,      focusstackhid,  {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_k,      focusstackhid,  {.i = -1 } },
-	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY|ControlMask,           XK_j,      pushdown,       {0} },
-	{ MODKEY|ControlMask,           XK_k,      pushup,         {0} },
-	{ MODKEY,                       XK_Return, zoom,           {0} },
-	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY,                       XK_a,      toggleopacity,  {0} },
-	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
-	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[3]} },
-	{ MODKEY,                       XK_o,      setlayout,      {.v = &layouts[4]} },
-	{ MODKEY|ShiftMask,             XK_h,      layoutscroll,   {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_l,      layoutscroll,   {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_f,      fullscreen,     {0} },
-	{ MODKEY,                       XK_space,  setlayout,      {0} },
-	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
-	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
-	{ MODKEY,                       XK_s,      show,           {0} },
-	{ MODKEY|ShiftMask,             XK_s,      showall,        {0} },
-	{ MODKEY,                       XK_h,      hide,           {0} },
-	{ MODKEY,                       XK_minus,  setgaps,        {.i = -1 } },
-	{ MODKEY,                       XK_equal,  setgaps,        {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_equal,  setgaps,        {.i = 0  } },
-	TAGKEYS(                        XK_1,                      0)
-	TAGKEYS(                        XK_2,                      1)
-	TAGKEYS(                        XK_3,                      2)
-	TAGKEYS(                        XK_4,                      3)
-	TAGKEYS(                        XK_5,                      4)
-	TAGKEYS(                        XK_6,                      5)
-	TAGKEYS(                        XK_7,                      6)
-	TAGKEYS(                        XK_8,                      7)
-	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
-	{ MODKEY|ControlMask|ShiftMask, XK_q,      quit,           {1} },
+	/* modifier                     key                function        argument */
+	{ ControlMask|Mod1Mask,         XK_BackSpace,      quit,           {0} },
 };
 
 /* button definitions */
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 static const Button buttons[] = {
 	/* click                event mask      button          function        argument */
-//	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
-//	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
+	{ ClkLtSymbol,          0,              Button1,        layoutscroll,   {.ui = +1} },
 	{ ClkWinTitle,          0,              Button1,        togglewin,      {0} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
@@ -159,46 +105,60 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
 
-void
-setlayoutex(const Arg *arg)
-{
-	setlayout(&((Arg) { .v = &layouts[arg->i] }));
-}
-
+/* helper function for view() */
 void
 viewex(const Arg *arg)
 {
-	view(&((Arg) { .ui = 1 << arg->ui }));
+	view(&((Arg) {.ui = 1 << arg->ui}));
 }
 
+/* helper function for setlayout() */
 void
-viewall(const Arg *arg)
+setlayoutex(const Arg *arg)
 {
-	view(&((Arg){.ui = ~0}));
+	setlayout(&((Arg) {.v = &layouts[arg->ui]}));
 }
 
+/* helper function for toggleview() */
 void
 toggleviewex(const Arg *arg)
 {
-	toggleview(&((Arg) { .ui = 1 << arg->ui }));
+	toggleview(&((Arg) {.ui = 1 << arg->ui}));
 }
 
+/* helper function for tag() */
 void
 tagex(const Arg *arg)
 {
-	tag(&((Arg) { .ui = 1 << arg->ui }));
+	tag(&((Arg) {.ui = 1 << arg->ui}));
 }
 
+/* helper function for toggletag() */
 void
 toggletagex(const Arg *arg)
 {
-	toggletag(&((Arg) { .ui = 1 << arg->ui }));
+	toggletag(&((Arg) {.ui = 1 << arg->ui}));
 }
 
+/* helper function to view all tags */
+void
+viewalltags(const Arg *arg)
+{
+	view(&((Arg) {.ui = ~0}));
+}
+
+/* helper function to view last tag */
+void
+viewlasttag(const Arg *arg)
+{
+	view(&((Arg) {0}));
+}
+
+/* helper function to copy client to all tags */
 void
 tagall(const Arg *arg)
 {
-	tag(&((Arg){.ui = ~0}));
+	tag(&((Arg) {.ui = ~0}));
 }
 
 /* signal definitions */
@@ -206,26 +166,32 @@ tagall(const Arg *arg)
 /* trigger signals using `xsetroot -name "fsignal:<signame> [<type> <value>]"` */
 static Signal signals[] = {
 	/* signum           function */
-	{ "focusstack",     focusstack },
-	{ "setmfact",       setmfact },
-	{ "togglebar",      togglebar },
-	{ "incnmaster",     incnmaster },
-	{ "togglefloating", togglefloating },
-	{ "focusmon",       focusmon },
-	{ "tagmon",         tagmon },
-	{ "zoom",           zoom },
-	{ "view",           view },
-	{ "viewall",        viewall },
-	{ "viewex",         viewex },
-	{ "toggleview",     view },
-	{ "toggleviewex",   toggleviewex },
-	{ "tag",            tag },
-	{ "tagall",         tagall },
-	{ "tagex",          tagex },
-	{ "toggletag",      tag },
-	{ "toggletagex",    toggletagex },
-	{ "killclient",     killclient },
-	{ "quit",           quit },
-	{ "setlayout",      setlayout },
-	{ "setlayoutex",    setlayoutex },
+	{ "togglebar",		togglebar },
+	{ "focusstackvis",	focusstackvis },
+	{ "focusstackhid",	focusstackhid },
+	{ "incnmaster",		incnmaster },
+	{ "setmfact",		setmfact },
+	{ "pushdown",		pushdown },
+	{ "pushup",			pushup },
+	{ "zoom",			zoom },
+	{ "view",			viewex },
+	{ "viewalltags",    viewalltags },
+	{ "viewlasttag",	viewlasttag },
+	{ "toggleopacity",	toggleopacity },
+	{ "killclient",		killclient },
+	{ "setlayout", 		setlayoutex },
+	{ "cyclelayouts",	layoutscroll },
+	{ "fullscreen",		fullscreen },
+	{ "togglefloating",	togglefloating },
+	{ "focusmon",		focusmon },
+	{ "tagmon",			tagmon },
+	{ "show",			show },
+	{ "showall",		showall },
+	{ "hide",			hide },
+	{ "setgaps",		setgaps },
+	{ "toggletag",		toggleviewex },
+	{ "movetotag",		tagex },
+	{ "copytoall",		tagall },
+	{ "copytotag",		toggletagex },
+	{ "quit",			quit },
 };
