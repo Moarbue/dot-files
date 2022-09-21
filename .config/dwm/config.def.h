@@ -56,6 +56,14 @@ static const unsigned int alphas[][3]      = {
 	{ OPAQUE,   baralphaNorm,  borderalpha  },	/* SchemeHid gruvbox */
 };
 
+static const char *const autostart[] = {
+	"sh", "-c", "sxhkd -c $HOME/.config/sxhkd/sxhkdrc", NULL,
+	"sh", "-c", "feh --bg-fill $HOME/wallpapers/future-town.jpg", NULL,
+	"picom", NULL,
+	"status_helper", NULL,
+	NULL /* terminate */
+};
+
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
