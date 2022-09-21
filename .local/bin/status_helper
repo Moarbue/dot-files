@@ -1,0 +1,5 @@
+#! /bin/sh
+
+prefix=~/.config/luastatus
+
+luastatus -b dwm -B separator=' ' $prefix/alsa.lua $prefix/cpu_usage.lua $prefix/mem_usage.lua $prefix/time_date.lua
