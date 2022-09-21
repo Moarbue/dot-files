@@ -88,7 +88,6 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeHid }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetSystemTray, NetSystemTrayOP, NetSystemTrayOrientation, NetSystemTrayOrientationHorz,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
@@ -265,6 +264,7 @@ static void resizerequest(XEvent *e);
 static void restack(Monitor *m);
 static void run(void);
 static void scan(void);
+static void schemeCycle(const Arg*);
 static int sendevent(Window w, Atom proto, int m, long d0, long d1, long d2, long d3, long d4);
 static void sendmon(Client *c, Monitor *m);
 static void setclientstate(Client *c, long state);
@@ -329,6 +329,7 @@ static pid_t winpid(Window w);
 static Systray *systray = NULL;
 static const char broken[] = "broken";
 static char stext[1024];
+static int stextw = 0;
 static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
 static int bh;               /* bar height */
@@ -359,6 +360,7 @@ static int restart = 0;
 static int running = 1;
 static Cur *cursor[CurLast];
 static Clr **scheme;
+static int SchemeNorm = 0, SchemeSel = 1, SchemeHid = 2;
 static Display *dpy;
 static Drw *drw;
 static Monitor *mons, *selmon;
@@ -598,7 +600,7 @@ buttonpress(XEvent *e)
 		} else if (ev->x < x + (int)TEXTW(selmon->ltsymbol))
 			click = ClkLtSymbol;
 		/* 2px right padding */
-		else if (ev->x > selmon->ww - sp - getsystraywidth() - (int)TEXTW(stext))
+		else if (ev->x > selmon->ww - sp - getsystraywidth() - stextw)
 			click = ClkStatusText;
 		else {
 			x += (int)TEXTW(selmon->ltsymbol);
@@ -1002,13 +1004,13 @@ drawstatusbar(Monitor *m, int bh, char* stext) {
 					char buf[8];
 					memcpy(buf, (char*)text+i+1, 7);
 					buf[7] = '\0';
-					drw_clr_create(drw, &drw->scheme[ColFg], buf, 1);
+					drw_clr_create(drw, &drw->scheme[ColFg], buf, alphas[SchemeNorm][ColFg]);
 					i += 7;
 				} else if (text[i] == 'b') {
 					char buf[8];
 					memcpy(buf, (char*)text+i+1, 7);
 					buf[7] = '\0';
-					drw_clr_create(drw, &drw->scheme[ColBg], buf, 1);
+					drw_clr_create(drw, &drw->scheme[ColBg], buf, alphas[SchemeNorm][ColBg]);
 					i += 7;
 				} else if (text[i] == 'd') {
 					drw->scheme[ColFg] = scheme[SchemeNorm][ColFg];
@@ -1062,7 +1064,7 @@ drawbar(Monitor *m)
 
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
-		tw = m->ww - drawstatusbar(m, bh, stext);
+		tw = stextw = m->ww - drawstatusbar(m, bh, stext);
 	}
 
 	resizebarwin(m);
@@ -1096,7 +1098,7 @@ drawbar(Monitor *m)
 				if (!ISVISIBLE(c))
 					continue;
 				if (m->sel == c)
-					scm = SchemeHid;
+					scm = SchemeSel;
 				else if (HIDDEN(c))
 					scm = SchemeHid;
 				else
@@ -2105,6 +2107,23 @@ scan(void)
 }
 
 void
+schemeCycle(const Arg *arg) {
+
+	if ((SchemeHid + 3) < LENGTH(colors))
+	{
+		SchemeNorm += 3;
+		SchemeSel += 3;
+		SchemeHid += 3;
+	} else {
+		SchemeNorm = 0;
+		SchemeSel = 1;
+		SchemeHid = 2;
+	}
+
+	drawbars();
+}
+
+void
 sendmon(Client *c, Monitor *m)
 {
 	if (c->mon == m)
@@ -2328,7 +2347,7 @@ setup(void)
 	scheme = ecalloc(LENGTH(colors) + 1, sizeof(Clr *));
 	scheme[LENGTH(colors)] = drw_scm_create(drw, colors[0], alphas[0], 3);
 	for (i = 0; i < LENGTH(colors); i++)
-		scheme[i] = drw_scm_create(drw, colors[i], alphas[i], 3);
+		scheme[i] = drw_scm_create(drw, colors[i], alphas[i % LENGTH(alphas)], 3);
 	/* init system tray */
 	updatesystray();
 	/* init bars */

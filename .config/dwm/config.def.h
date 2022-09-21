@@ -26,24 +26,34 @@ static       Bool bUseOpacity            = True;     /* Starts with opacity on a
 static const int user_bh                 = 30;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
 static const char *fonts[]               = { "Iosevka Nerd Font:size=12" };
 static const char dmenufont[]            = "Iosevka Nerd Font:size=12";
-static const char col_gray1[]            = "#222222";
-static const char col_gray2[]            = "#444444";
-static const char col_gray3[]            = "#bbbbbb";
-static const char col_gray4[]            = "#eeeeee";
-static const char col_cyan[]             = "#005577";
-static const unsigned int baralpha       = 0x80;
-static const unsigned int borderalpha    = OPAQUE;
+
+
+static const unsigned int baralphaNorm    = 0x80;
+static const unsigned int baralphaSel     = 0xf0;
+static const unsigned int borderalpha     = OPAQUE;
+
+/* colors */
+/* gruvbox */
+static char gb_beige[]    = "#d4be98";
+static char gb_red[]      = "#ea6962";
+static char gb_orange[]   = "#e78a4e";
+static char gb_green[]    = "#a9b665";
+static char gb_blue[]     = "#7daea3";
+static char gb_purple[]   = "#d3869b";
+static char gb_aqua[]     = "#89b482";
+static char gb_darkgrey[] = "#282828";
+
 static const char *colors[][3]      = {
-	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
-	[SchemeHid]  = { col_cyan,  col_gray1, col_cyan  },
+	/*fg         bg             border   */
+	{ gb_red,    gb_darkgrey,   gb_darkgrey },   /* SchemeNorm gruvbox */
+	{ gb_red,    gb_blue,       gb_red   },   /* SchemeSel gruvbox */
+	{ gb_aqua,   gb_darkgrey,   gb_darkgrey },   /* SchemeHid gruvbox */
 };
 static const unsigned int alphas[][3]      = {
-	/*               fg      bg        border     */
-	[SchemeNorm] = { OPAQUE, baralpha, borderalpha },
-	[SchemeSel]  = { OPAQUE, baralpha, borderalpha },
-	[SchemeHid]  = { OPAQUE, baralpha, borderalpha },
+	/*fg        bg             border     */
+	{ OPAQUE,   baralphaNorm,  borderalpha  },	/* SchemeNorm gruvbox */
+	{ OPAQUE,   baralphaSel,   borderalpha  },	/* SchemeSel gruvbox */
+	{ OPAQUE,   baralphaNorm,  borderalpha  },	/* SchemeHid gruvbox */
 };
 
 /* tagging */
@@ -201,5 +211,6 @@ static Signal signals[] = {
 	{ "movetotag",		tagex },
 	{ "copytoall",		tagall },
 	{ "copytotag",		toggletagex },
+	{ "cycleschemes",	schemeCycle },
 	{ "quit",			quit },
 };
