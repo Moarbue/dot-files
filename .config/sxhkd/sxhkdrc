@@ -1,0 +1,184 @@
+# apps
+
+# terminal
+super + Return
+        st
+
+# browser
+super + w
+        librewolf
+
+# spotify
+super + s
+        spotify
+
+# visual studio code
+super + o
+        code
+
+# discord
+super + d
+        discord
+
+# interactive screenshot
+shift + alt + s
+        flameshot gui
+
+# bottom
+super + b
+        st -e btm
+
+# dmenu
+super + p
+        dmenu_run -l 9 -p "﩯 "
+
+#dmenu apps
+super + a
+	dmenu_app
+
+# powermenu
+super + Escape
+	powermenu
+
+# reload keybindings
+super + BackSpace
+	pkill -USR1 -x sxhkd && notify-send "Reloaded Keybindings"
+
+# Control song
+XF86Audio{Prev,Next,Play}
+	playerctl {previous,next,play-pause}
+
+# Volume control
+XF86Audio{LowerVolume,RaiseVolume,Mute}
+	amixer sset Master {1%-,1%+,toggle}
+
+
+# dwm
+
+# toggle the statusbar
+super + shift + b
+        dwmc togglebar
+
+# move focus to next window, hidden windows included
+alt + Tab
+        dwmc focusstackhid +1
+
+# move focus to next window, hidden windows excluded
+super + Tab
+        dwmc focusstackvis +1
+
+# increase/decrease number of clients in the master area
+# super + {i,d}
+# 	dwmc incnmaster {+,-}1
+
+# increase/decrease size of master area
+super + {l,h}
+	dwmc setmfact {+,-}0.05
+
+# move focused client window up/down the stack
+super + shift + {Up,Down}
+	dwmc {pushup,pushdown}
+
+# switch focuse client window with master window
+super + shift + Return
+	dwmc zoom
+
+# change tag
+super + {1,2,3,4,5,6,7,8,9}
+	dwmc view {0,1,2,3,4,5,6,7,8}
+
+# view all tags
+# super + 0
+# 	dwmc viewalltags
+
+# view last used tag
+# super + shift + Tab
+# 	dwmc viewlasttag
+
+# toggle not focused windows having a different opacity
+super + shift + o
+	dwmc toggleopacity
+
+# kill focused client window
+super + c
+	dwmc killclient
+
+# set different layouts (defined in config.def.h)
+# super + control + {t,o,u}
+# 	dwmc setlayout {0,3,4}
+
+# set monocle layout
+super + m
+	dwmc setlayout 2
+
+# cycle different layouts
+super + space
+	dwmc cyclelayouts +1
+
+# toggle fullscreen
+super + f
+	dwmc fullscreen
+
+# toggle floating mode of focused client window
+super + shift + f
+	dwmc togglefloating
+
+# cycle through monitors or focus specific monitor
+# super + control + {Tab,m}
+# 	dwmc focusmon {+1,1}
+
+# send focuseed client to monitor (not tested)
+# super + {comma,period}
+# 	dwmc tagmon {-,+}1
+
+# show focused window (relevant for focusstack{hid,vis})
+super + shift + x
+	dwmc show
+
+# show all hidden windows (relevant for focusstack{hid,vis})
+super + shift + control + x
+	dwmc showall
+
+# hide focused window (relevant for focusstack{hid,vis})
+super + x
+	dwmc hide
+
+# increase/decrease gaps
+super + shift + {plus,minus}
+	dwmc incgaps {+,-}1
+
+# set default gaps
+super + shift + g
+	dwmc defaultgaps
+
+# toggle gaps
+super + g
+	dwmc togglegaps
+
+# add tag to selected tags
+# super + control + {1,2,3,4,5,6,7,8,9}
+# 	dwmc toggletag {0,1,2,3,4,5,6,7,8}
+
+# move client window to specific tag
+super + shift + {1,2,3,4,5,6,7,8,9}
+	dwmc movetotag {0,1,2,3,4,5,6,7,8}
+
+# make focused client window on all tags visible
+# super + control + 0
+# 	dwmc copytoall
+
+# make focused client window visible on specific tag
+super + control + {1,2,3,4,5,6,7,8,9}
+	dwmc copytotag {0,1,2,3,4,5,6,7,8}
+
+# cycle through color schemes
+super + t
+	dwmc cycleschemes
+
+# quit or restart dwm
+super + shift + {q,r}
+	dwmc quit {0,1}
+
+# recompile dwm and reload it
+super + shift + control + r
+	notify-send "Recompiling dwm" && recompile_dwm && dwmc quit 1
