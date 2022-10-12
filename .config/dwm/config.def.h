@@ -58,6 +58,8 @@ static const unsigned int alphas[][3]      = {
 static const char *const autostart[] = {
 	"sh", "-c", "sxhkd -c $HOME/.config/sxhkd/sxhkdrc", NULL,
 	"sh", "-c", "feh --bg-fill $HOME/wallpapers/future-town.jpg", NULL,
+	"volumeicon", NULL,
+	"nm-applet", NULL,
 	"picom", NULL,
 	"status_helper", NULL,
 	NULL /* terminate */
@@ -184,6 +186,12 @@ tagall(const Arg *arg)
 	tag(&((Arg) {.ui = ~0}));
 }
 
+void
+fullscreen(const Arg *arg)
+{
+	setfullscreen(selmon->sel, !selmon->sel->isfullscreen);
+}
+
 /* signal definitions */
 /* signum must be greater than 0 */
 /* trigger signals using `xsetroot -name "fsignal:<signame> [<type> <value>]"` */
@@ -204,7 +212,7 @@ static Signal signals[] = {
 	{ "killclient",		killclient },
 	{ "setlayout", 		setlayoutex },
 	{ "cyclelayouts",	layoutscroll },
-	{ "fullscreen",		setfullscreen },
+	{ "fullscreen",		fullscreen },
 	{ "togglefloating",	togglefloating },
 	{ "focusmon",		focusmon },
 	{ "tagmon",			tagmon },
